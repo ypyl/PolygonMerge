@@ -1,0 +1,21 @@
+# Build results
+bin/
+obj/
+*.nupkg
+
+# Test results
+TestResults/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# NuGet packages
+*.nupkg

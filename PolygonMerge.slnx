@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="src/PolygonMerge/PolygonMerge.csproj" />
+    <Project Path="tests/PolygonMerge.Tests/PolygonMerge.Tests.csproj" />
+  </Folder>
+</Solution>
