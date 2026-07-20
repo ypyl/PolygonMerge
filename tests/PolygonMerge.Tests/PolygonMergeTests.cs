@@ -102,7 +102,7 @@ public class TableDetectionHeuristicTests
             MaxTableHorizontalGap = 25,
             MaxTableVerticalGap = 15,
             EnableTableDetection = true,
-            MaxParagraphsPerPage = 100 // Don't reduce during these tests
+            TargetParagraphsPerPage = 100 // Don't reduce during these tests
         };
         _grouper = new ParagraphGrouper(options);
     }
@@ -275,7 +275,7 @@ public class TableStructureExplicitTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 100 // Don't reduce during these tests
+            TargetParagraphsPerPage = 100 // Don't reduce during these tests
         };
         _grouper = new ParagraphGrouper(options);
     }
@@ -494,8 +494,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 10,
-            MinParagraphsPerPage = 1,
+            TargetParagraphsPerPage = 10,
             EnableTableDetection = false
         };
         var grouper = new ParagraphGrouper(options);
@@ -521,8 +520,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 20,
-            MinParagraphsPerPage = 6,
+            TargetParagraphsPerPage = 20,
             EnableTableDetection = false
         };
         var grouper = new ParagraphGrouper(options);
@@ -548,8 +546,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 20,
-            MinParagraphsPerPage = 6,
+            TargetParagraphsPerPage = 20,
             EnableTableDetection = false
         };
         var grouper = new ParagraphGrouper(options);
@@ -571,8 +568,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 1, // Would force everything together
-            MinParagraphsPerPage = 1,
+            TargetParagraphsPerPage = 1, // Would force everything together
             EnableTableDetection = false
         };
         var grouper = new ParagraphGrouper(options);
@@ -615,8 +611,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 1,
-            MinParagraphsPerPage = 1,
+            TargetParagraphsPerPage = 1,
             EnableTableDetection = false
         };
         var grouper = new ParagraphGrouper(options);
@@ -639,8 +634,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 1,
-            MinParagraphsPerPage = 1,
+            TargetParagraphsPerPage = 1,
             EnableTableDetection = false
         };
         var grouper = new ParagraphGrouper(options);
@@ -666,8 +660,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 5,
-            MinParagraphsPerPage = 1
+            TargetParagraphsPerPage = 5,
         };
         var grouper = new ParagraphGrouper(options);
 
@@ -708,8 +701,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 5,
-            MinParagraphsPerPage = 1,
+            TargetParagraphsPerPage = 5,
             EnableTableDetection = true
         };
         var grouper = new ParagraphGrouper(options);
@@ -739,8 +731,7 @@ public class HacReductionTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MaxParagraphsPerPage = 5,
-            MinParagraphsPerPage = 1,
+            TargetParagraphsPerPage = 5,
             EnableTableDetection = false
         };
         var grouper = new ParagraphGrouper(options);
@@ -760,6 +751,50 @@ public class HacReductionTests
 
         Assert.True(result.Count <= 5);
     }
+
+    [Fact]
+    public void MaxMergeDistance_StopsEarly()
+    {
+        var options = new ParagraphGrouperOptions
+        {
+            TargetParagraphsPerPage = 1,
+            MaxMergeDistance = 10,
+            EnableTableDetection = false
+        };
+        var grouper = new ParagraphGrouper(options);
+
+        var paragraphs = new List<OcrParagraph>
+        {
+            new() { Page = 1, Content = "A", BoundingBox = new Polygon { MinX = 0, MinY = 0, MaxX = 10, MaxY = 10 } },
+            new() { Page = 1, Content = "B", BoundingBox = new Polygon { MinX = 0, MinY = 110, MaxX = 10, MaxY = 120 } }
+        };
+
+        var result = grouper.Group(paragraphs);
+
+        Assert.Equal(2, result.Count);
+    }
+
+    [Fact]
+    public void MaxMergeDistance_Null_NoCap()
+    {
+        var options = new ParagraphGrouperOptions
+        {
+            TargetParagraphsPerPage = 1,
+            MaxMergeDistance = null,
+            EnableTableDetection = false
+        };
+        var grouper = new ParagraphGrouper(options);
+
+        var paragraphs = new List<OcrParagraph>
+        {
+            new() { Page = 1, Content = "A", BoundingBox = new Polygon { MinX = 0, MinY = 0, MaxX = 10, MaxY = 10 } },
+            new() { Page = 1, Content = "B", BoundingBox = new Polygon { MinX = 0, MinY = 110, MaxX = 10, MaxY = 120 } }
+        };
+
+        var result = grouper.Group(paragraphs);
+
+        Assert.Equal(1, result.Count);
+    }
 }
 
 public class OptionsValidationTests
@@ -769,8 +804,7 @@ public class OptionsValidationTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MinParagraphsPerPage = 6,
-            MaxParagraphsPerPage = 20
+            TargetParagraphsPerPage = 20
         };
 
         // Should not throw
@@ -782,8 +816,18 @@ public class OptionsValidationTests
     {
         var options = new ParagraphGrouperOptions
         {
-            MinParagraphsPerPage = 20,
-            MaxParagraphsPerPage = 10
+            TargetParagraphsPerPage = 0
+        };
+
+        Assert.Throws<ArgumentException>(() => options.Validate());
+    }
+
+    [Fact]
+    public void NegativeMaxMergeDistance_ThrowsArgumentException()
+    {
+        var options = new ParagraphGrouperOptions
+        {
+            MaxMergeDistance = -1
         };
 
         Assert.Throws<ArgumentException>(() => options.Validate());
@@ -823,11 +867,11 @@ public class OptionsValidationTests
     }
 
     [Fact]
-    public void MinParagraphsLessThanOne_ThrowsArgumentException()
+    public void TargetParagraphsPerPageZero_ThrowsArgumentException()
     {
         var options = new ParagraphGrouperOptions
         {
-            MinParagraphsPerPage = 0
+            TargetParagraphsPerPage = 0
         };
 
         Assert.Throws<ArgumentException>(() => options.Validate());
@@ -894,7 +938,7 @@ public class DiRegistrationTests
     public void AddParagraphGrouper_WithCustomOptions_UsesOptions()
     {
         var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
-        services.AddParagraphGrouper(opts => opts.MaxParagraphsPerPage = 10);
+        services.AddParagraphGrouper(opts => opts.TargetParagraphsPerPage = 10);
         var provider = services.BuildServiceProvider();
 
         var grouper = provider.GetRequiredService<IParagraphGrouper>();

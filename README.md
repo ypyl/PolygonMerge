@@ -57,7 +57,7 @@ var merged = grouper.Group(paragraphs, tableCells, p => p.Id);
 ```csharp
 services.AddParagraphGrouper(options =>
 {
-    options.MaxParagraphsPerPage = 10;
+    options.TargetParagraphsPerPage = 10;
     options.EnableTableDetection = true;
 });
 ```
@@ -74,8 +74,8 @@ services.AddParagraphGrouper(options =>
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `MinParagraphsPerPage` | 6 | Minimum target paragraphs per page |
-| `MaxParagraphsPerPage` | 20 | Maximum target paragraphs per page (HAC stop condition) |
+| `TargetParagraphsPerPage` | 20 | Maximum target paragraphs per page (HAC stop condition) |
+| `MaxMergeDistance` | null | Optional distance cap — stops HAC early if closest pair exceeds this (points) |
 | `VerticalDistanceWeight` | 2.0 | Y-axis weight multiplier for reading-order-aware proximity |
 | `MaxTableHorizontalGap` | 25.0 | Max X-gap (points) for heuristic table row detection |
 | `MaxTableVerticalGap` | 15.0 | Max Y-gap (points) for heuristic table column detection |

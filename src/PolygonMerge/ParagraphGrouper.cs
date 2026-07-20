@@ -210,7 +210,7 @@ public class ParagraphGrouper : IParagraphGrouper
 
     private List<Cluster> ReduceClusters(List<Cluster> clusters)
     {
-        int targetCount = _options.MaxParagraphsPerPage;
+        int targetCount = _options.TargetParagraphsPerPage;
 
         if (clusters.Count <= targetCount)
             return clusters;
@@ -244,6 +244,10 @@ public class ParagraphGrouper : IParagraphGrouper
 
             if (mergeA == -1)
                 break; // All remaining pairs are locked-locked; stop
+
+            // Stop early if the closest pair exceeds the distance cap
+            if (_options.MaxMergeDistance.HasValue && minDistance > _options.MaxMergeDistance.Value)
+                break;
 
             clusters[mergeA].Merge(clusters[mergeB]);
             clusters.RemoveAt(mergeB);

@@ -1,8 +1,5 @@
-# polygon-merge-config Specification
+## MODIFIED Requirements
 
-## Purpose
-Defines `ParagraphGrouperOptions` (configuration with `TargetParagraphsPerPage`, `MaxMergeDistance`, table detection thresholds, and vertical weight), `IParagraphGrouper` interface, `ParagraphGrouper` service class, and DI registration extensions. This is the public API surface for consuming the library.
-## Requirements
 ### Requirement: ParagraphGrouperOptions Configuration
 The system SHALL define a `ParagraphGrouperOptions` class with the following configurable properties:
 
@@ -93,15 +90,3 @@ The registration SHALL use Singleton lifetime by default.
 #### Scenario: DI registration with custom options
 - **WHEN** `services.AddParagraphGrouper(opts => opts.TargetParagraphsPerPage = 10)` is called
 - **THEN** the registered grouper uses the customized options
-
-### Requirement: IParagraphGrouper Interface
-The system SHALL define an `IParagraphGrouper` interface with two methods:
-- `List<OcrParagraph> Group(List<OcrParagraph> paragraphs)`
-- `List<OcrParagraph> Group(List<OcrParagraph> paragraphs, List<TableCellInfo> tableCells, Func<OcrParagraph, string> paragraphKeySelector)`
-
-The `ParagraphGrouper` class SHALL implement this interface.
-
-#### Scenario: Interface abstraction for testability
-- **WHEN** a consumer depends on IParagraphGrouper via constructor injection
-- **THEN** they can substitute a mock implementation in unit tests
-

@@ -1,7 +1,7 @@
 # table-structure Specification
 
 ## Purpose
-TBD - created by archiving change polygon-merge-library. Update Purpose after archive.
+Defines the explicit table structure pre-pass: accepting `TableCellInfo` metadata from upstream OCR engines (e.g., Azure Document Intelligence), matching paragraphs via a user-provided key selector, and merging cells within the same table row into locked clusters before spatial clustering. This is the primary table-preservation path.
 ## Requirements
 ### Requirement: TableCellInfo Model
 The system SHALL define a `TableCellInfo` class with the following properties:

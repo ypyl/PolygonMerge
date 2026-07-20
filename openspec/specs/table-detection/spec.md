@@ -1,7 +1,7 @@
 # table-detection Specification
 
 ## Purpose
-TBD - created by archiving change polygon-merge-library. Update Purpose after archive.
+Defines the heuristic grid-adjacency table detection algorithm: identifying table neighbors by row/column alignment with configurable gap thresholds, transitive zone collapse, and locked cluster marking. Serves as a fallback when explicit `TableCellInfo` metadata is not available.
 ## Requirements
 ### Requirement: Grid Adjacency Table Detection
 The system SHALL detect table structures by identifying paragraphs that share row or column alignment and are within configurable gap thresholds.

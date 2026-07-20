@@ -7,16 +7,17 @@ namespace PolygonMerge;
 public class ParagraphGrouperOptions
 {
     /// <summary>
-    /// Minimum target number of paragraphs per page. Must be ≥ 1 and ≤ MaxParagraphsPerPage.
-    /// Default: 6.
+    /// Target maximum number of paragraphs per page. The HAC loop stops when the cluster count
+    /// reaches or falls below this value. Must be ≥ 1. Default: 20.
     /// </summary>
-    public int MinParagraphsPerPage { get; set; } = 6;
+    public int TargetParagraphsPerPage { get; set; } = 20;
 
     /// <summary>
-    /// Maximum target number of paragraphs per page. The HAC loop stops when cluster count reaches this value.
-    /// Default: 20.
+    /// Optional distance safety valve. When set, the HAC loop stops early if the closest pair of
+    /// clusters exceeds this distance, even if the target count has not been reached.
+    /// When null, no distance cap is applied. Must be ≥ 0 if set. Default: null.
     /// </summary>
-    public int MaxParagraphsPerPage { get; set; } = 20;
+    public double? MaxMergeDistance { get; set; } = null;
 
     /// <summary>
     /// Weight multiplier for Y-axis distance in AABB calculations.
@@ -48,12 +49,11 @@ public class ParagraphGrouperOptions
     /// </summary>
     public void Validate()
     {
-        if (MinParagraphsPerPage < 1)
-            throw new ArgumentException($"{nameof(MinParagraphsPerPage)} must be at least 1.");
+        if (TargetParagraphsPerPage < 1)
+            throw new ArgumentException($"{nameof(TargetParagraphsPerPage)} must be at least 1.");
 
-        if (MinParagraphsPerPage > MaxParagraphsPerPage)
-            throw new ArgumentException(
-                $"{nameof(MinParagraphsPerPage)} ({MinParagraphsPerPage}) must be ≤ {nameof(MaxParagraphsPerPage)} ({MaxParagraphsPerPage}).");
+        if (MaxMergeDistance.HasValue && MaxMergeDistance.Value < 0)
+            throw new ArgumentException($"{nameof(MaxMergeDistance)} must be non-negative if set.");
 
         if (VerticalDistanceWeight < 0)
             throw new ArgumentException($"{nameof(VerticalDistanceWeight)} must be non-negative.");

@@ -1,7 +1,7 @@
 # ocr-model Specification
 
 ## Purpose
-TBD - created by archiving change polygon-merge-library. Update Purpose after archive.
+Defines the input/output data models for OCR paragraph data: `OcrParagraph`, `Polygon` (axis-aligned bounding box with merge and distance utilities), and `TableCellInfo` (table cell metadata from upstream OCR engines). These models form the data contract for all PolygonMerge operations and support `System.Text.Json` serialization.
 ## Requirements
 ### Requirement: OcrParagraph Input Model
 The system SHALL define an `OcrParagraph` class with the following properties:
