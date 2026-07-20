@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>PolygonMerge</PackageId>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
     <Description>Lightweight .NET library for merging fragmented OCR paragraphs into coherent segments using spatial clustering with table structure preservation.</Description>
     <Authors>PolygonMerge Contributors</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
